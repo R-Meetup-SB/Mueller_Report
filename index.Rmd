@@ -81,5 +81,9 @@ corpus <- tm_map(corpus, removePunctuation)
 corpus <- tm_map(corpus, removeNumbers)
 corpus <- tm_map(corpus, removeWords, stopwords("english"))
 
+
+#word cloud
+wordcloud(corpus, max.words = 100, random.order = FALSE, scale = c(3, .7))
+
 ```
 
