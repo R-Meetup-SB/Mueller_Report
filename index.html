@@ -1590,6 +1590,7 @@ report &lt;- file.path(&quot;report/Mueller_report.pdf&quot;)
 report_text &lt;- pdf_text(report)
 
 #df conversion from Ohara
+#https://github.com/oharac/text_workshop
 report_df &lt;- data.frame(text = report_text) 
 
 report_df &lt;- data.frame(text = report_text) %&gt;%
@@ -1606,6 +1607,7 @@ report_df &lt;- data.frame(text = report_text) %&gt;%
   ungroup()
 
 #tidytext book example
+#https://www.tidytextmining.com/tidytext.html
 library(tidytext)
 text_df &lt;- tibble(line = 1:212, text = report_text)
 text_df %&gt;%

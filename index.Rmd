@@ -31,6 +31,7 @@ report <- file.path("report/Mueller_report.pdf")
 report_text <- pdf_text(report)
 
 #df conversion from Ohara
+#https://github.com/oharac/text_workshop
 report_df <- data.frame(text = report_text) 
 
 report_df <- data.frame(text = report_text) %>%
@@ -47,6 +48,7 @@ report_df <- data.frame(text = report_text) %>%
   ungroup()
 
 #tidytext book example
+#https://www.tidytextmining.com/tidytext.html
 library(tidytext)
 text_df <- tibble(line = 1:212, text = report_text)
 text_df %>%
