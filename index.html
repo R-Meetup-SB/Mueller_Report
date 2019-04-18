@@ -1584,12 +1584,27 @@ div.tocify {
 <pre class="r"><code>#key libraries
 library(tidyverse)
 library(pdftools)
+library(wordcloud)
+library(tm)
+library(stringi)
+library(stringr)
 
 #report into useable object
 report &lt;- file.path(&quot;report/Mueller_report.pdf&quot;)
 report_text &lt;- pdf_text(report)
+#mrtext &lt;- pdf_text(&quot;report/Mueller_report.pdf&quot;)
 
-#df conversion from Ohara
+#word count
+wc&lt;-stri_count_words(report_text, locale = NULL)
+wc</code></pre>
+<pre><code>##   [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+##  [36] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+##  [71] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+## [106] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+## [141] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+## [176] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+## [211] 0 0</code></pre>
+<pre class="r"><code>#df conversion from Ohara
 #https://github.com/oharac/text_workshop
 report_df &lt;- data.frame(text = report_text) 
 

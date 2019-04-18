@@ -25,10 +25,19 @@ To quantitatively examine the report.
 #key libraries
 library(tidyverse)
 library(pdftools)
+library(wordcloud)
+library(tm)
+library(stringi)
+library(stringr)
 
 #report into useable object
 report <- file.path("report/Mueller_report.pdf")
 report_text <- pdf_text(report)
+#mrtext <- pdf_text("report/Mueller_report.pdf")
+
+#word count
+wc<-stri_count_words(report_text, locale = NULL)
+wc
 
 #df conversion from Ohara
 #https://github.com/oharac/text_workshop
