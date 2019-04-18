@@ -1,0 +1,27 @@
+---
+title:
+author: "cjlortie"
+date: "2019"
+output:
+  html_document:
+    theme: spacelab
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+<br>  
+
+### A scrape of Mueller report.  
+
+![](./mr.jpeg)   
+
+### Purpose
+To quantitatively examine the report.  
+
+### Report
+```{r, warning=FALSE, message=FALSE}
+library(pdftools)
+
+```
