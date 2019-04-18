@@ -22,6 +22,34 @@ To quantitatively examine the report.
 
 ### Report
 ```{r, warning=FALSE, message=FALSE}
+#key libraries
+library(tidyverse)
 library(pdftools)
+
+#report into useable object
+report <- file.path("report/Mueller_report.pdf")
+report_text <- pdf_text(report)
+
+#df conversion from Ohara
+report_df <- data.frame(text = report_text) 
+
+report_df <- data.frame(text = report_text) %>%
+  mutate(page = 1:n()) %>%
+  mutate(text_sep = str_split(text, '\\n')) %>% # split by line, text_set=lists of lines 
+  unnest(text_sep) # separate lists into rows
+
+report_df <- data.frame(text = report_text) %>%
+  mutate(page = 1:n()) %>%
+  mutate(text_sep = str_split(text, '\\n')) %>%
+  unnest(text_sep) %>%
+  group_by(page) %>%
+  mutate(line = 1:n()) %>% # add line #s by page
+  ungroup()
+
+#tidytext book example
+library(tidytext)
+text_df <- tibble(line = 1:212, text = report_text)
+text_df %>%
+  unnest_tokens(word, text)
 
 ```

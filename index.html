@@ -1581,7 +1581,37 @@ div.tocify {
 </div>
 <div id="report" class="section level3">
 <h3>Report</h3>
-<pre class="r"><code>library(pdftools)</code></pre>
+<pre class="r"><code>#key libraries
+library(tidyverse)
+library(pdftools)
+
+#report into useable object
+report &lt;- file.path(&quot;report/Mueller_report.pdf&quot;)
+report_text &lt;- pdf_text(report)
+
+#df conversion from Ohara
+report_df &lt;- data.frame(text = report_text) 
+
+report_df &lt;- data.frame(text = report_text) %&gt;%
+  mutate(page = 1:n()) %&gt;%
+  mutate(text_sep = str_split(text, '\\n')) %&gt;% # split by line, text_set=lists of lines 
+  unnest(text_sep) # separate lists into rows
+
+report_df &lt;- data.frame(text = report_text) %&gt;%
+  mutate(page = 1:n()) %&gt;%
+  mutate(text_sep = str_split(text, '\\n')) %&gt;%
+  unnest(text_sep) %&gt;%
+  group_by(page) %&gt;%
+  mutate(line = 1:n()) %&gt;% # add line #s by page
+  ungroup()
+
+#tidytext book example
+library(tidytext)
+text_df &lt;- tibble(line = 1:212, text = report_text)
+text_df %&gt;%
+  unnest_tokens(word, text)</code></pre>
+<pre><code>## # A tibble: 0 x 2
+## # … with 2 variables: line &lt;int&gt;, word &lt;chr&gt;</code></pre>
 </div>
 
 
