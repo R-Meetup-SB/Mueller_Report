@@ -20,10 +20,9 @@ output:
 ### Purpose
 To quantitatively examine the report.  
 
-### Report
+### The report
 ```{r, warning=FALSE, message=FALSE}
 #library(pdftools)
-
 #report into useable object
 #report <- file.path("https://assets.documentcloud.org/documents/5955379/Redacted-Mueller-Report.pdf")
 #report_text <- pdf_text(report)
@@ -50,50 +49,15 @@ To quantitatively examine the report.
   #ungroup()
 
 #write_csv(report_df, "data/report_df.csv")
-
-#tidytext book example
-#https://www.tidytextmining.com/tidytext.html
-#library(tidytext)
-#text_df <- tibble(line = 1:212, text = report_text)
-#text_df %>%
-  #unnest_tokens(word, text)
-
 #too large for github so scraped, wrote, and pushed to figshare  
 #report <- read_csv("https://ndownloader.figshare.com/files/14930555")
 #saveRDS(report, file = "data/report.rds")
 
 ```
 
-
-### Conventional text exploration  
-```{r, text EDA, warning=FALSE, message=FALSE, echo = FALSE, eval = FALSE}
-#old skool approach
-library(wordcloud)
-library(tm)
-library(stringi)
-library(stringr)
-
-#read messy data
-report <- readRDS("data/report.rds")
-
-#create a corpus for tm
-corpus <- Corpus(VectorSource(report))
-
-#clean a wee bit
-corpus <- tm_map(corpus, tolower)
-corpus <- tm_map(corpus, removePunctuation)
-corpus <- tm_map(corpus, removeNumbers)
-#corpus <- tm_map(corpus, removeWords, stopwords("english"))
-corpus <- tm_map(corpus, removeWords, c("the", "that", "and"))
-
-
-#word cloud
-wordcloud(corpus, max.words = 100, random.order = FALSE, scale = c(3, .7))
-
-```
-
 ### Tidytext mining  
 ```{r, tidytext, warning=FALSE, message=FALSE}
+#https://www.tidytextmining.com/tidytext.html
 library(tidyverse)
 library(tidytext)
 library(wordcloud)
