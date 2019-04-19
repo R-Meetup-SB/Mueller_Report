@@ -62,8 +62,8 @@ library(pdftools)
 
 #too large for github so scraped, wrote, and pushed to figshare  
 #report <- read_csv("https://ndownloader.figshare.com/files/14930555")
-saveRDS(report, file = "data/report.rds")
-
+#saveRDS(report, file = "data/report.rds")
+report <- readRDS("data/report.rds")
 ```
 
 
