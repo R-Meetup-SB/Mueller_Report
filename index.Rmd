@@ -121,6 +121,12 @@ ggplot(sentiment_summary, aes(net_sentiment)) +
   labs(x = "net sentiment (positive-negative)", y = "word frequency") +annotate("text", x=10, y=400, label= "net sentiment = -462") +
   geom_vline(xintercept = 0, linetype = 2, color = "red", size = 1)
 
+ggplot(sentiment_summary, aes(net_sentiment)) +
+         geom_histogram(binwidth = 1) +
+  xlim(-100, 100) +
+  labs(x = "net sentiment (positive-negative)", y = "word frequency") +annotate("text", x=50, y=400, label= "net sentiment = -462") +
+  geom_vline(xintercept = 0, linetype = 2, color = "red", size = 1)
+
 sum(sentiment_summary$net_sentiment)
 ```
 
