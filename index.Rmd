@@ -61,7 +61,8 @@ library(pdftools)
   #unnest_tokens(word, text)
 
 #too large for github so scraped, wrote, and pushed to figshare  
-report <- read_csv("https://ndownloader.figshare.com/files/14930555")
+#report <- read_csv("https://ndownloader.figshare.com/files/14930555")
+saveRDS(report, file = "data/report.rds")
 
 ```
 
