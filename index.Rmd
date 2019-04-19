@@ -58,31 +58,38 @@ To quantitatively examine the report.
 ### Tidytext mining  
 ```{r, tidytext, warning=FALSE, message=FALSE}
 #https://www.tidytextmining.com/tidytext.html
+#key libraries####
 library(tidyverse)
 library(tidytext)
 library(wordcloud)
 library(stringr)
+
+#load and tidy up text####
 report <- readRDS("data/report.rds")
 text_df <- tibble(line = 1:19195, text = report$text_sep)
 
 text_df <-text_df %>%
   unnest_tokens(word, text)
 
-data(stop_words)
+data(stop_words) #common works like 'the', 'that', 'and', 'with'
 tidy_df <- text_df %>%
-  anti_join(stop_words)
+  anti_join(stop_words) #remove stop words
 
+#some of the words in character vector are numeric so tidy up
 tidy_numbers <- text_df %>%
   filter(!is.na(as.numeric(word)))
 
 tidy_df <- tidy_df %>%
   anti_join(tidy_numbers)
-  
+
+#word count
 word_count <- tidy_df %>%
-  count(word, sort = TRUE) 
+  count(word, sort = TRUE) %>%
+  mutate(proportion = n / sum(n))
 word_count
 #write_csv(word_count, "data/mueller_report_words.csv")
 
+#viz of word frequencies####
 na.exclude(tidy_df) %>%
   count(word, sort = TRUE) %>%
   filter(n > 200) %>%
@@ -95,5 +102,25 @@ na.exclude(tidy_df) %>%
 
 wordcloud(word_count$word, word_count$n, max.words = 100, random.order = FALSE, scale = c(3, .7))
 
+#sentiments####
+sentiments
+#The nrc lexicon categorizes words in a binary fashion (“yes”/“no”) into categories of positive, negative, anger, anticipation, disgust, fear, joy, sadness, surprise, and trust. 
+#The bing lexicon categorizes words in a binary fashion into positive and negative categories. 
+#The AFINN lexicon assigns words with a score that runs between -5 and 5, with negative scores indicating negative sentiment and positive scores indicating positive sentiment. 
+
+bing_sent <- get_sentiments("bing")
+tidy_sent_bing <- inner_join(tidy_df, bing_sent, by = "word") #retain only rows in both sets.
+sentiment_summary <- tidy_sent_bing %>%
+  count(word, index = line %/% 6838, sentiment) %>%
+  spread(sentiment, n, fill = 0) %>%
+  mutate(net_sentiment = positive - negative)
+
+ggplot(sentiment_summary, aes(net_sentiment)) +
+         geom_histogram(binwidth = 0.5) +
+  xlim(-20, 20) +
+  labs(x = "net sentiment (positive-negative)", y = "word frequency") +annotate("text", x=10, y=400, label= "net sentiment = -462") +
+  geom_vline(xintercept = 0, linetype = 2, color = "red", size = 1)
+
+sum(sentiment_summary$net_sentiment)
 ```
 
