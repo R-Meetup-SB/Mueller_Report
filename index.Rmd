@@ -132,7 +132,34 @@ sum(sentiment_summary$net_sentiment)
 
 ### Smaller pdf test
 ```{r, pdf test, warning=FALSE, message=FALSE}
+library(tidyverse)
 library(pdftools)
+library(tidytext)
+library(wordcloud)
+
+#step 1. get pdf into text
+text <- pdf_text("report_smaller.pdf")
+
+#step 2. convert to tibble
+text_df <- tibble(text = text) %>%
+  unnest_tokens(word, text) %>%
+  mutate(linenumber = row_number())
+
+#step 3. remove stopwords
+data("stop_words")
+tidy_df <- text_df %>%
+  anti_join(stop_words) %>%
+  count(word, sort = TRUE) 
+
+#step 4. tidy up for words that are not words
+tidy_numbers <- tidy_df %>%
+  filter(!is.na(as.numeric(word)))
+
+tidy_df <- tidy_df %>%
+  anti_join(tidy_numbers)
+
+#regex needed now to really clean it up
+#shortcut - filter tidy_df for all n>1?
 
 
 ```
