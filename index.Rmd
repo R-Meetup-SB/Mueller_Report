@@ -130,3 +130,9 @@ ggplot(sentiment_summary, aes(net_sentiment)) +
 sum(sentiment_summary$net_sentiment)
 ```
 
+### Smaller pdf test
+```{r, pdf test, warning=FALSE, message=FALSE}
+library(pdftools)
+
+
+```
