@@ -160,6 +160,40 @@ tidy_df <- tidy_df %>%
 
 #regex needed now to really clean it up
 #shortcut - filter tidy_df for all n>1?
+#BUT if doing sentiment analysis - all words that do not have sentiment assigned will be filtered out by anti_join
 
+#write_csv(tidy_df, "data/tidy.csv")
 
+#plot of frequency
+tidy_df %>%
+  filter(n > 100) %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(word, n)) +
+  geom_col() +
+  xlab(NULL) +
+  coord_flip() +
+  theme(text = element_text(size=6))
+
+#word cloud
+wordcloud(tidy_df$word, tidy_df$n, max.words = 100, random.order = FALSE, scale = c(3, .7))
+
+#sentiment
+bing_sent <- get_sentiments("bing")
+tidy_sent_bing <- inner_join(tidy_df, bing_sent, by = "word")
+sentiment_summary <- tidy_sent_bing %>%
+  count(word, index = 1:length(n), sentiment) %>%
+  spread(sentiment, n, fill = 0) %>%
+  mutate(net_sentiment = positive - negative)
+
+ggplot(sentiment_summary, aes(net_sentiment)) +
+         geom_histogram() +
+  xlim(-20, 20) +
+  labs(x = "net sentiment (positive-negative)", y = "word frequency") +annotate("text", x=10, y=400, label= "net sentiment = -462") +
+  geom_vline(xintercept = 0, linetype = 2, color = "red", size = 1)
+
+#odd code in some respects
+tidy_sent <- tidy_sent_bing %>%
+  group_by(sentiment) %>%
+  summarise(total = n()) #butthis is missing the weightings by n!!!
+tidy_sent
 ```
