@@ -21,7 +21,7 @@ output:
 To quantitatively examine the report.  
 
 ### The report
-```{r, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE, echo=FALSE}
 #library(pdftools)
 #report into useable object
 #report <- file.path("https://assets.documentcloud.org/documents/5955379/Redacted-Mueller-Report.pdf")
@@ -56,7 +56,7 @@ To quantitatively examine the report.
 ```
 
 ### Tidytext mining  
-```{r, tidytext, warning=FALSE, message=FALSE}
+```{r, tidytext, warning=FALSE, message=FALSE, echo=FALSE}
 #https://www.tidytextmining.com/tidytext.html
 #key libraries####
 library(tidyverse)
@@ -102,6 +102,7 @@ na.exclude(tidy_df) %>%
 
 wordcloud(word_count$word, word_count$n, max.words = 100, random.order = FALSE, scale = c(3, .7))
 
+
 #sentiments####
 sentiments
 #The nrc lexicon categorizes words in a binary fashion (“yes”/“no”) into categories of positive, negative, anger, anticipation, disgust, fear, joy, sadness, surprise, and trust. 
@@ -128,10 +129,11 @@ ggplot(sentiment_summary, aes(net_sentiment)) +
   geom_vline(xintercept = 0, linetype = 2, color = "red", size = 1)
 
 sum(sentiment_summary$net_sentiment)
+
 ```
 
 ### Smaller pdf test
-```{r, pdf test, warning=FALSE, message=FALSE}
+```{r, pdf test, warning=FALSE, message=FALSE, echo=TRUE}
 library(tidyverse)
 library(pdftools)
 library(tidytext)
@@ -152,11 +154,14 @@ tidy_df <- text_df %>%
   count(word, sort = TRUE) 
 
 #step 4. tidy up for words that are not words
-tidy_numbers <- tidy_df %>%
-  filter(!is.na(as.numeric(word)))
+#tidy_numbers <- tidy_df %>%
+  #filter(!is.na(as.numeric(word)))
+
+#tidy_df <- tidy_df %>%
+  #anti_join(tidy_numbers)
 
 tidy_df <- tidy_df %>%
-  anti_join(tidy_numbers)
+  filter(is.na(as.numeric(word)))
 
 #regex needed now to really clean it up
 #shortcut - filter tidy_df for all n>1?
@@ -197,11 +202,27 @@ tidy_sent <- tidy_sent_bing %>%
   summarise(total = sum(n)) 
 tidy_sent
 
+nrc_sent <- get_sentiments("nrc")
+tidy_sent_nrc <- inner_join(tidy_df, nrc_sent, by = "word") %>% 
+  filter(word != "president" & word != "trump") #retain only rows in both sets.
+
+tidy_sent_nrc <- tidy_sent_nrc %>%
+  group_by(sentiment) %>%
+  summarise(n = sum(n)) 
+tidy_sent_nrc
+
+wordcloud(tidy_sent_nrc$sentiment, tidy_sent_nrc$n, max.words = 100, random.order = FALSE, scale = c(3, .7))
+
+ggplot(tidy_sent_nrc, aes(reorder(sentiment, n), n)) +
+  geom_col() +
+  coord_flip() +
+  labs(y = "n", x ="sentiment")
+
 
 ```
 
 ### Tweets  
-```{r, tweets, warning=FALSE, message=FALSE}
+```{r, tweets, warning=FALSE, message=FALSE, echo=TRUE}
 #install.packages("twitteR")
 #library(twitteR)
 #tweets <- searchTwitter("#MuellerReport",n=1000,lang="en")
