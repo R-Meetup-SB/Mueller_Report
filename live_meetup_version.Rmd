@@ -1,0 +1,62 @@
+---
+title: "cracking_mueller_report"
+author: "Julien Brun, NCEAS"
+date: "5/6/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Having Fun!!
+
+```{r attaching libraries, echo=FALSE}
+library(pdftools)
+library(tidyverse)
+library(tidytext)
+library(wordcloud)
+```
+
+
+```{r import text}
+report <- pdf_text("report_smaller.pdf")
+
+text_df <- tibble(text=report) %>% # Transform vector into Tibble 
+  unnest_tokens(word, text) %>% # tokenize text into words
+  mutate(linenumber=row_number()) # add line number as explicit attribute
+
+```
+
+
+```{r removing stop words, echo=FALSE}
+data("stop_words")
+
+text_df <- text_df %>%
+  anti_join(stop_words) %>%
+  count(word, sort=TRUE)
+```
+
+```{r removing numbers, message=FALSE}
+tidy_no_numb <- text_df %>% 
+  filter(is.na(as.numeric(word)))
+```
+
+```{r wordcloud}
+wordcloud(tidy_no_numb$word, tidy_no_numb$n, max.words = 50, random.color=TRUE)
+```
+
+```{r full sentimental}
+
+nrc_sentiment <- get_sentiments("nrc")  #get sentiment
+
+# group by sentiment category and sum
+report_sent <- inner_join(tidy_no_numb, nrc_sentiment, by="word") %>%
+  group_by(sentiment) %>%
+  summarise(word_count = n())# join common words
+
+# plot the thing
+ggplot(report_sent, aes(sentiment, word_count)) +
+  geom_col()
+```
+
